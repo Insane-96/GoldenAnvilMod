@@ -4,9 +4,9 @@ import net.minecraft.client.gui.GuiRepair;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.world.World;
 
-public class GoldenAnvilGuiClient extends GuiRepair{
+public class GuiClient extends GuiRepair{
 
-	public GoldenAnvilGuiClient(InventoryPlayer inventoryIn, World worldIn) {
+	public GuiClient(InventoryPlayer inventoryIn, World worldIn) {
 		super(inventoryIn, worldIn);
 	}
 	

@@ -6,9 +6,9 @@ import net.minecraft.inventory.ContainerRepair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class GoldenAnvilGuiServer extends ContainerRepair{
+public class GuiServer extends ContainerRepair{
 
-	public GoldenAnvilGuiServer(InventoryPlayer playerInventory, World worldIn, BlockPos blockPosIn,
+	public GuiServer(InventoryPlayer playerInventory, World worldIn, BlockPos blockPosIn,
 			EntityPlayer player) {
 		super(playerInventory, worldIn, blockPosIn, player);
 	}

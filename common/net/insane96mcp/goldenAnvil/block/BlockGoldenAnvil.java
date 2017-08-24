@@ -1,7 +1,7 @@
 package net.insane96mcp.goldenAnvil.block;
 
 import net.insane96mcp.goldenAnvil.GoldenAnvil;
-import net.insane96mcp.goldenAnvil.lib.GoldenAnvilGuiHandler;
+import net.insane96mcp.goldenAnvil.lib.GuiHandler;
 import net.insane96mcp.goldenAnvil.lib.Names;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAnvil;
@@ -31,7 +31,7 @@ public class BlockGoldenAnvil extends BlockAnvil{
     {
         if (!worldIn.isRemote)
         {
-            playerIn.openGui(GoldenAnvil.instance, GoldenAnvilGuiHandler.GOLDEN_ANVIL_GUI_ID, worldIn, (int)hitX, (int)hitY, (int)hitZ);
+            playerIn.openGui(GoldenAnvil.instance, GuiHandler.GOLDEN_ANVIL_GUI_ID, worldIn, (int)hitX, (int)hitY, (int)hitZ);
         }
 
         return true;
