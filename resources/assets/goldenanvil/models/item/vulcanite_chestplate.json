@@ -1,7 +1,0 @@
-{
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "vulcanite:items/vulcanite_chestplate"
-  }
-}
-
