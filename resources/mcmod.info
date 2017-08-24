@@ -1,0 +1,16 @@
+[
+{
+  "modid": "golden_anvil",
+  "name": "Golden Anvil",
+  "description": "A new type of anvil that has an higher Max Level (configurable) but breaks faster. An idea by /u/ManMan36",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "https://minecraft.curseforge.com/projects/goldenanvil",
+  "updateUrl": "",
+  "authorList": ["Insane96MCP"],
+  "credits": "/u/ManMan36 for the idea on /r/minecraftsuggestions",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
