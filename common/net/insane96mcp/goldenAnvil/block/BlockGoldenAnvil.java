@@ -31,7 +31,7 @@ public class BlockGoldenAnvil extends BlockAnvil{
     {
         if (!worldIn.isRemote)
         {
-            playerIn.openGui(GoldenAnvil.instance, GuiHandler.GOLDEN_ANVIL_GUI_ID, worldIn, (int)hitX, (int)hitY, (int)hitZ);
+            playerIn.openGui(GoldenAnvil.instance, GuiHandler.GOLDEN_ANVIL_GUI_ID, worldIn, pos.getX(), pos.getY(), pos.getZ());
         }
 
         return true;

@@ -10,5 +10,4 @@ public class GuiClient extends GuiRepair{
 		super(inventoryIn, worldIn);
 	}
 	
-
 }
