@@ -9,9 +9,9 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.ContainerRepair;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.InventoryCraftResult;
@@ -20,6 +20,8 @@ import net.minecraft.item.ItemNameTag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class GuiServer extends ContainerRepair{
 
@@ -46,12 +48,15 @@ public class GuiServer extends ContainerRepair{
              * For tile entities, ensures the chunk containing the tile entity is saved to disk later - the game won't
              * think it hasn't changed and skip it.
              */
+        	@Override
             public void markDirty()
             {
                 super.markDirty();
-                onCraftMatrixChanged(this);
+                GuiServer.this.onCraftMatrixChanged(this);
             }
         };
+        
+        this.addSlotToContainer(new Slot(this.inputSlots, 0, 27, 47));
 	}
 	
 	@Override
@@ -59,6 +64,21 @@ public class GuiServer extends ContainerRepair{
 		return this.world.getBlockState(this.blockPos).getBlock() != ModBlocks.goldenAnvilBlock ? false : playerIn.getDistanceSq((double)this.blockPos.getX() + 0.5D, (double)this.blockPos.getY() + 0.5D, (double)this.blockPos.getZ() + 0.5D) <= 64.0D;
 	}
 
+
+    /**
+     * Callback for when the crafting matrix is changed.
+     */
+	@Override
+    public void onCraftMatrixChanged(IInventory inventoryIn)
+    {
+        super.onCraftMatrixChanged(inventoryIn);
+
+        if (inventoryIn == this.inputSlots)
+        {
+            this.updateRepairOutput();
+        }
+    }
+    
 	@Override
 	public void updateRepairOutput()
     {
@@ -278,4 +298,123 @@ public class GuiServer extends ContainerRepair{
             this.detectAndSendChanges();
         }
     }
+
+	@Override
+    public void addListener(IContainerListener listener)
+    {
+        super.addListener(listener);
+        listener.sendProgressBarUpdate(this, 0, this.maximumCost);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void updateProgressBar(int id, int data)
+    {
+        if (id == 0)
+        {
+            this.maximumCost = data;
+        }
+    }
+
+    /**
+     * Called when the container is closed.
+     */
+     @Override
+    public void onContainerClosed(EntityPlayer playerIn)
+    {
+        super.onContainerClosed(playerIn);
+
+        if (!this.world.isRemote)
+        {
+            for (int i = 0; i < this.inputSlots.getSizeInventory(); ++i)
+            {
+                ItemStack itemstack = this.inputSlots.removeStackFromSlot(i);
+
+                if (!itemstack.isEmpty())
+                {
+                    playerIn.dropItem(itemstack, false);
+                }
+            }
+        }
+    }
+
+     /**
+      * Take a stack from the specified inventory slot.
+      */
+     @Override
+     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index)
+     {
+         ItemStack itemstack = ItemStack.EMPTY;
+         Slot slot = (Slot)this.inventorySlots.get(index);
+
+         if (slot != null && slot.getHasStack())
+         {
+             ItemStack itemstack1 = slot.getStack();
+             itemstack = itemstack1.copy();
+
+             if (index == 2)
+             {
+                 if (!this.mergeItemStack(itemstack1, 3, 39, true))
+                 {
+                     return ItemStack.EMPTY;
+                 }
+
+                 slot.onSlotChange(itemstack1, itemstack);
+             }
+             else if (index != 0 && index != 1)
+             {
+                 if (index >= 3 && index < 39 && !this.mergeItemStack(itemstack1, 0, 2, false))
+                 {
+                     return ItemStack.EMPTY;
+                 }
+             }
+             else if (!this.mergeItemStack(itemstack1, 3, 39, false))
+             {
+                 return ItemStack.EMPTY;
+             }
+
+             if (itemstack1.isEmpty())
+             {
+                 slot.putStack(ItemStack.EMPTY);
+             }
+             else
+             {
+                 slot.onSlotChanged();
+             }
+
+             if (itemstack1.getCount() == itemstack.getCount())
+             {
+                 return ItemStack.EMPTY;
+             }
+
+             slot.onTake(playerIn, itemstack1);
+         }
+
+         return itemstack;
+     }
+
+     /**
+      * used by the Anvil GUI to update the Item Name being typed by the player
+      */
+     @Override
+     public void updateItemName(String newName)
+     {
+         this.repairedItemName = newName;
+
+         if (this.getSlot(2).getHasStack())
+         {
+             ItemStack itemstack = this.getSlot(2).getStack();
+
+             if (StringUtils.isBlank(newName))
+             {
+                 itemstack.clearCustomName();
+             }
+             else
+             {
+                 itemstack.setStackDisplayName(this.repairedItemName);
+             }
+         }
+
+         this.updateRepairOutput();
+     }
 }
